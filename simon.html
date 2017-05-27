@@ -2,7 +2,9 @@
   <head>
     <title>Simon Dice</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="dist/sweetalert.css">
     <link rel="stylesheet" href="simon.css">
+    <meta charset="utf-8">
   </head>
   <body>
     <div class="keyboard">
@@ -39,18 +41,28 @@
         <div class="key" data-key="77">m</div>
       </div>
     </div>
+    <script src="dist/sweetalert.min.js"></script>
     <script>
       const levels = 15;
       let keys = generateKeys(levels);
 
       function nextRound(currentLevel){
         if(currentLevel == levels){
-          return alert('Ganaste');
+          //Alertas usando sweetAlert
+          return swal({
+            title: 'Ganaste',
+            type: 'success'
+          });
         }
-        alert(`Nivel ${currentLevel + 1}`);
+
+        swal({
+          timer: 1000,
+          title: `Nivel ${currentLevel + 1}`,
+          showConfirmButton: false
+        });
 
         for(let i=0; i <=currentLevel; i++){
-          setTimeout(function(){activate(keys[i])}, 1000*(i+1));
+          setTimeout(function(){activate(keys[i])}, 1000*(i+1) + 300);
         }
 
         let i = 0;
@@ -69,7 +81,18 @@
           }else{
             activate(ev.keyCode, {fail: true});
             window.removeEventListener('keydown', onkeydown);
-            setTimeout(function(){alert('Perdiste :(');}, 700);
+            setTimeout(function(){
+              swal({
+                title: "Perdiste :(",
+                text: "¿Quieres jugar de nuevo?",
+                confirmButtonText: "¡Si!",
+                showCancelButton: true,
+                cancelButtonText: "No >:("
+              }, function(ok){
+                if(ok){generateKeys(levels);
+                nextRound(0)
+                }
+              })}, 700);
           }
         }
       }
